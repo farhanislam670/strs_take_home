@@ -13,7 +13,7 @@ class Property(Base):
     
     # External IDs
     property_id: Mapped[str] = mapped_column(String(255), unique=True, index=True, primary_key=True)
-    property_manager_host_id: Mapped[Optional[int]] = mapped_column(Integer)
+    property_manager_host_id: Mapped[Optional[str]] = mapped_column(String(255))
     
     # Basic Info
     title: Mapped[Optional[str]] = mapped_column(Text)
@@ -24,7 +24,7 @@ class Property(Base):
     # Location
     city_name: Mapped[Optional[str]] = mapped_column(String(100))
     state_name: Mapped[Optional[str]] = mapped_column(String(100))
-    zipcode: Mapped[Optional[str]] = mapped_column(String(20))
+    zipcode: Mapped[Optional[int]] = mapped_column(Integer)
     latitude: Mapped[Optional[float]] = mapped_column(Float)
     longitude: Mapped[Optional[float]] = mapped_column(Float)
 
@@ -45,7 +45,7 @@ class Property(Base):
     
     # Physical Specs
     bedrooms: Mapped[Optional[int]] = mapped_column(Integer)
-    bathrooms: Mapped[Optional[int]] = mapped_column(Integer)
+    bathrooms: Mapped[Optional[float]] = mapped_column(Float)
     number_of_beds: Mapped[Optional[int]] = mapped_column(Integer)
     accommodates: Mapped[Optional[int]] = mapped_column(Integer)
     person_capacity: Mapped[Optional[int]] = mapped_column(Integer)
