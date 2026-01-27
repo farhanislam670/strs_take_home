@@ -119,11 +119,10 @@ def calculate_market_positioning_score(
     # Price tier score
     tier_scores = {
         'Luxury': 85,
-        'Upper Upscale': 90,
-        'Upscale': 100,
-        'Upper Midscale': 80,
-        'Midscale': 60,
-        'Economy': 40
+        'Upscale': 100,    
+        'Midscale': 80,   
+        'Economy': 60,    
+        'Budget': 40       
     }
     tier_score = tier_scores.get(property.price_tier, 50)
     

@@ -56,4 +56,4 @@ class InvestmentScore(Base):
     notes: Mapped[Optional[str]] = mapped_column(Text)
     
     # Relationship
-    property: Mapped["Property"] = relationship("Property")
+    property: Mapped["Property"] = relationship("Property", back_populates="investment_score")

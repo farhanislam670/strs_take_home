@@ -3,6 +3,8 @@ from typing import Optional, List
 from decimal import Decimal
 from src.schemas.property_csv import PropertyCSVRow, CleanedPropertyData
 import logging
+import re
+import unicodedata
 
 logger = logging.getLogger(__name__)
 
@@ -50,6 +52,42 @@ class DataCleaner:
         return max(0.0, min(5.0, value))
     
     @staticmethod
+    def clean_price_tier(value: Optional[str]) -> Optional[str]:
+        """
+        Clean price tier strings by removing numbering.
+        
+        Examples:
+            "1. Budget" -> "Budget"
+            "5. Luxury" -> "Luxury"
+            "No Tier" -> None
+            "3. Midscale" -> "Midscale"
+        
+        Returns None for invalid/empty values.
+        """
+        if not value:
+            return None
+        
+        value_str = str(value).strip()
+        
+        # Handle "No Tier" case
+        if value_str.lower() in ['no tier', 'none', '']:
+            return None
+        
+        # Remove numbering pattern: "1. ", "2. ", etc.
+        cleaned = re.sub(r'^\d+\.\s*', '', value_str)
+        
+        # Validate against known tiers
+        valid_tiers = ['Budget', 'Economy', 'Midscale', 'Upscale', 'Luxury']
+        
+        if cleaned in valid_tiers:
+            return cleaned
+        
+        # Log warning for unexpected values
+        logger.warning(f"Unexpected price tier value: '{value}' -> cleaned to '{cleaned}'")
+        
+        return cleaned if cleaned else None
+    
+    @staticmethod
     def parse_amenities(amenities_str: Optional[str]) -> List[str]:
         """
         Parse comma-separated amenities string into list.
@@ -86,14 +124,40 @@ class DataCleaner:
         
         return False, ""
     
+
+
+    @staticmethod
+    def clean_title(title: str) -> str:
+        if not title:
+            return None
+        
+        # 1. Normalize Unicode (fixes weird accents/characters)
+        title = unicodedata.normalize('NFKC', str(title))
+        
+        # 2. Replace separators (•, |, etc.) with a standard " - "
+        # This regex looks for bullets, pipes, or middle dots surrounded by optional space
+        title = re.sub(r'\s*[•|·]\s*', ' - ', title)
+        
+        # 3. (Optional) Remove Emojis/Symbols if you only want text/numbers/punctuation
+        # This keeps alphanumeric, spaces, and basic punctuation (.,&!-)
+        # title = re.sub(r'[^\w\s.,&!-]', '', title) 
+        
+        # 4. Collapse multiple spaces into one and strip ends
+        title = re.sub(r'\s+', ' ', title)
+        
+        return title.strip()
+    
     @staticmethod
     def resolve_duplicates(csv_row: PropertyCSVRow, market_area: str) -> CleanedPropertyData:
         """
         Resolve duplicate columns and create CleanedPropertyData.
         """
         
-        # Title resolution
-        title = csv_row.title or csv_row.listing_name or csv_row.name
+        # 1. Get the raw title
+        raw_title = csv_row.title or csv_row.listing_name or csv_row.name
+        
+        # 2. Clean the title
+        title = DataCleaner.clean_title(raw_title)
         
         # Superhost resolution (prefer SUPERHOST)
         superhost = csv_row.superhost or csv_row.is_super_host or False
@@ -135,6 +199,9 @@ class DataCleaner:
         # Parse amenities
         amenities_list = DataCleaner.parse_amenities(csv_row.amenities)
         
+        # Clean price tier
+        price_tier = DataCleaner.clean_price_tier(csv_row.price_tier)
+        
         # Convert financials to Decimal
         revenue = Decimal(str(csv_row.revenue)) if csv_row.revenue is not None else None
         revenue_potential = Decimal(str(csv_row.revenue_potential)) if csv_row.revenue_potential is not None else None
@@ -170,7 +237,7 @@ class DataCleaner:
             accommodates=csv_row.accommodates,
             person_capacity=person_capacity,
             
-            price_tier=csv_row.price_tier,
+            price_tier=price_tier,
             revenue=revenue,
             revenue_potential=revenue_potential,
             adr=adr,

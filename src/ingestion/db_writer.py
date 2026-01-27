@@ -33,6 +33,9 @@ class DatabaseWriter:
         review_records = []
         
         for prop_data in properties:
+
+            from datetime import datetime
+            current_time = datetime.utcnow()
             # Prepare property record
             property_dict = {
                 'property_id': prop_data.property_id,
@@ -99,6 +102,8 @@ class DatabaseWriter:
                 'has_beach_access': prop_data.has_beach_access,
                 'has_outdoor_dining_area': prop_data.has_outdoor_dining_area,
                 'high_season_insights': prop_data.high_season_insights,
+                'created_at': current_time, 
+                'updated_at': current_time,  
             }
             property_records.append(property_dict)
             
@@ -135,33 +140,51 @@ class DatabaseWriter:
         sample_amenity_dict = amenity_records[0]
         sample_review_dict = review_records[0]
         
-        # Batch upsert properties - THIS IS THE FIX!
-        stmt = insert(Property).values(property_records)  # Pass the WHOLE list
+        # Batch upsert properties
+        stmt = insert(Property).values(property_records)
+
+        # Build update dict excluding property_id and created_at
+        update_dict = {
+            k: stmt.excluded[k] 
+            for k in sample_property_dict.keys() 
+            if k not in ['property_id', 'created_at']
+        }
+
         stmt = stmt.on_conflict_do_update(
             index_elements=['property_id'],
-            set_={k: stmt.excluded[k] for k in sample_property_dict.keys() if k != 'property_id'}
+            set_=update_dict  
         )
         self.session.execute(stmt)
         logger.info(f"Upserted {len(property_records)} properties")
         
         # Batch upsert amenities
         stmt = insert(PropertyAmenity).values(amenity_records)
+        update_dict = {
+            k: stmt.excluded[k] 
+            for k in sample_amenity_dict.keys() 
+            if k not in ['id', 'property_id']  # ← Exclude both id and property_id
+        }
         stmt = stmt.on_conflict_do_update(
             index_elements=['property_id'],
-            set_={k: stmt.excluded[k] for k in sample_amenity_dict.keys() if k != 'property_id'}
+            set_=update_dict
         )
         self.session.execute(stmt)
         logger.info(f"Upserted {len(amenity_records)} amenity records")
-        
+
         # Batch upsert reviews
         stmt = insert(PropertyReview).values(review_records)
+        update_dict = {
+            k: stmt.excluded[k] 
+            for k in sample_review_dict.keys() 
+            if k not in ['id', 'property_id']  # ← Exclude both id and property_id
+        }
         stmt = stmt.on_conflict_do_update(
             index_elements=['property_id'],
-            set_={k: stmt.excluded[k] for k in sample_review_dict.keys() if k != 'property_id'}
+            set_=update_dict
         )
         self.session.execute(stmt)
         logger.info(f"Upserted {len(review_records)} review records")
-        
+
         self.session.commit()
         
         return len(property_records)

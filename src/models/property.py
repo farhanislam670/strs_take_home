@@ -1,12 +1,14 @@
 from typing import Optional, TYPE_CHECKING
 from decimal import Decimal
-from sqlalchemy import String, Integer, Float, Text, Boolean
+from sqlalchemy import String, Integer, Float, Text, Boolean, Index, Column, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from src.database import Base
+from datetime import datetime
 
 if TYPE_CHECKING:
     from src.models.amenities import PropertyAmenity
     from src.models.reviews import PropertyReview
+    from src.models.investment_score import InvestmentScore
 
 class Property(Base):
     __tablename__ = "properties"
@@ -102,10 +104,52 @@ class Property(Base):
 
     # High Season Insights
     high_season_insights: Mapped[Optional[str]] = mapped_column(Text)
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, 
+        default=datetime.utcnow, 
+        nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, 
+        default=datetime.utcnow, 
+        onupdate=datetime.utcnow, 
+        nullable=False
+    )
     
     amenity_data: Mapped["PropertyAmenity"] = relationship(
         "PropertyAmenity", back_populates="property", uselist=False, cascade="all, delete-orphan"
     )
     review_stats: Mapped["PropertyReview"] = relationship(
         "PropertyReview", back_populates="property", uselist=False, cascade="all, delete-orphan"
+    )
+    investment_score: Mapped["InvestmentScore"] = relationship( 
+        "InvestmentScore", back_populates="property",  uselist=False,  cascade="all, delete-orphan"
+    )
+
+    __table_args__ = (
+        Index(
+            "idx_properties_market_bedrooms_revenue",
+            "market_area", "bedrooms", "revenue",
+            postgresql_where=(bedrooms.isnot(None) & revenue.isnot(None)),
+            postgresql_using="btree"
+        ),
+        Index(
+            "idx_properties_analytics",
+            "market_area", "bedrooms", "revenue", "occupancy", "adr",
+            postgresql_where=(bedrooms.isnot(None) & revenue.isnot(None)),
+            postgresql_using="btree"
+        ),
+        Index(
+            "idx_properties_bedrooms",
+            "bedrooms",
+            postgresql_where=(bedrooms.isnot(None)),
+            postgresql_using="btree"
+        ),
+        Index(
+            "idx_properties_revenue",
+            "revenue",
+            postgresql_where=(revenue.isnot(None)),
+            postgresql_using="btree"
+        ),
     )

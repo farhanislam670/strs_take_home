@@ -108,8 +108,8 @@ class CSVLoader:
         csv_files = []
         
         for csv_file in data_dir.glob("*.csv"):
-            # Infer market area from filename
-            market_area = csv_file.stem.replace("_", " ")
+            # Infer market area from part before first hyphen
+            market_area = csv_file.stem.split("-", 1)[0].strip()
             csv_files.append((csv_file, market_area))
             
         logger.info(f"Discovered {len(csv_files)} CSV files: {[f[1] for f in csv_files]}")
