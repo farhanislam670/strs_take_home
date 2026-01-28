@@ -10,3 +10,10 @@ data/raw/*
 !data/raw/.gitkeep
 data/processed/*
 !data/processed/.gitkeep
+# Frontend dependencies
+src/frontend/node_modules/
+frontend/node_modules/
+
+# Frontend build output
+frontend/dist/
+src/frontend/dist/
