@@ -133,7 +133,7 @@ export default function PropertyList() {
                     <div className="flex justify-between">
                       <span className="text-gray-600">Occupancy:</span>
                       <span className="font-semibold">
-                        {property.occupancy}%
+                        {((property.occupancy || 0) * 100).toFixed(2)}%
                       </span>
                     </div>
                     <div className="flex justify-between">
