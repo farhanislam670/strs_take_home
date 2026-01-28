@@ -51,12 +51,10 @@ SELECT
     tp.property_id,
     tp.title,
     
-    -- Property Performance
     tp.revenue::NUMERIC(10,2) AS property_revenue,
     tp.occupancy::NUMERIC(5,4) AS property_occupancy,
     tp.adr::NUMERIC(10,2) AS property_adr,
     
-    -- Market Averages
     ma.avg_revenue::NUMERIC(10,2) AS market_avg_revenue,
     ma.avg_occupancy::NUMERIC(5,4) AS market_avg_occupancy,
     ma.avg_adr::NUMERIC(10,2) AS market_avg_adr,
@@ -66,10 +64,8 @@ SELECT
     (tp.occupancy - ma.avg_occupancy)::NUMERIC(5,4) AS occupancy_gap,
     (tp.adr - ma.avg_adr)::NUMERIC(10,2) AS adr_gap,
     
-    -- Performance Indicators
     ROUND(((tp.revenue - ma.avg_revenue) / ma.avg_revenue * 100)::NUMERIC, 2) AS revenue_vs_avg_pct,
     
-    -- Context
     ma.property_count AS total_properties_in_category
     
 FROM top_properties tp
@@ -94,12 +90,10 @@ SELECT
     property_id,
     title,
 
-    -- Property Performance
     revenue::NUMERIC(10,2) AS property_revenue,
     occupancy::NUMERIC(5,4) AS property_occupancy,
     adr::NUMERIC(10,2) AS property_adr,
 
-    -- Market Averages
     market_avg_revenue::NUMERIC(10,2),
     market_avg_occupancy::NUMERIC(5,4),
     market_avg_adr::NUMERIC(10,2),

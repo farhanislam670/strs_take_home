@@ -2,8 +2,8 @@
 
 ## Prerequisites
 
-- **Python** 3.10 or higher  
-- **PostgreSQL** database (or **Supabase** account)  
+- **Python** 3.10 or higher
+- **PostgreSQL** database (or **Supabase** account)
 - **Git**
 
 ---
@@ -20,12 +20,14 @@ cd strs_take_home
 ## 2. Create Virtual Environment
 
 ### 🪟 Windows
+
 ```bash
 python -m venv venv
 venv\Scripts\activate
 ```
 
 ### 🐧 Linux / 🍎 Mac
+
 ```bash
 python3 -m venv venv
 source venv/bin/activate
@@ -59,10 +61,13 @@ DATABASE_URL=postgresql://postgres:your-password@db.your-project.supabase.co:543
 ENVIRONMENT=development
 ```
 
+You don't need to edit the supabase variables. Those are standholders that I initially thought were required.
+
 ### 🔑 Getting Supabase Credentials
-1. Go to your **Supabase project dashboard**  
-2. Navigate to **Settings → Database** for connection details  
-3. Navigate to **Settings → API** for API keys  
+
+1. Go to your **Supabase project dashboard**
+2. Navigate to **Settings → Database** for connection details
+3. Navigate to **Settings → API** for API keys
 
 ---
 
@@ -73,6 +78,7 @@ python scripts/test_supabase_conn.py
 ```
 
 **Expected Output:**
+
 ```
 ✅ Connected successfully!
 PostgreSQL version: PostgreSQL 15.x ...
@@ -81,6 +87,10 @@ PostgreSQL version: PostgreSQL 15.x ...
 ---
 
 # 💾 Database Setup
+
+## Preliminary step:
+
+To make sure it works, please go to the alembinc.ini file and update line 89 with your Supabase DB URL.
 
 ## Step 1: Apply Migrations
 
@@ -91,10 +101,11 @@ alembic upgrade head
 ```
 
 **This creates:**
-- `properties` — Main property data  
-- `property_amenities` — Amenity details (JSONB)  
-- `property_reviews` — Review statistics  
-- `investment_scores` — Calculated scores  
+
+- `properties` — Main property data
+- `property_amenities` — Amenity details (JSONB)
+- `property_reviews` — Review statistics
+- `investment_scores` — Calculated scores
 
 ---
 
@@ -107,12 +118,14 @@ python scripts/seed_data.py
 ```
 
 **This will:**
-- Read CSV files from `data/raw/`  
-- Clean and validate data  
-- Insert properties, amenities, and reviews  
-- Show progress and summary  
+
+- Read CSV files from `data/raw/`
+- Clean and validate data
+- Insert properties, amenities, and reviews
+- Show progress and summary
 
 **Expected Output:**
+
 ```
 📊 Loading data from data/raw...
 ✓ Loaded Blue Ridge GA: 150 properties
@@ -135,12 +148,14 @@ python scripts/calculate_scores.py
 ```
 
 **This will:**
-- Calculate market benchmarks  
-- Score each property (0–100 scale)  
-- Store results in `investment_scores` table  
-- Flag top opportunities  
+
+- Calculate market benchmarks
+- Score each property (0–100 scale)
+- Store results in `investment_scores` table
+- Flag top opportunities
 
 **Expected Output:**
+
 ```
 📊 Calculating market benchmarks...
 ✓ Benchmarks calculated for 5 bedroom configurations
@@ -171,6 +186,7 @@ uvicorn src.api.main:app --reload
 ```
 
 **The API will be available at:**
+
 - API: [http://127.0.0.1:8000](http://127.0.0.1:8000)
 - Interactive Docs: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 - Alternative Docs: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
