@@ -21,7 +21,7 @@ function Show-Tree {
 
     # Exclude unwanted directories
     $items = Get-ChildItem -Path $Folder | Where-Object {
-        $_.Name -notin @('venv', '__pycache__')
+        $_.Name -notin @('venv', '__pycache__', 'node_modules')
     }
 
     $count = $items.Count

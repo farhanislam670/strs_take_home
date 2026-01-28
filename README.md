@@ -190,3 +190,5 @@ uvicorn src.api.main:app --reload
 - API: [http://127.0.0.1:8000](http://127.0.0.1:8000)
 - Interactive Docs: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 - Alternative Docs: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
+
+# Video Walkthrough: https://www.youtube.com/watch?v=TV6vpv0iHyM
