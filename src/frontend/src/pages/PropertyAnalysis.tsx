@@ -86,7 +86,9 @@ export default function PropertyAnalysisPage() {
               </div>
               <div className="flex justify-between">
                 <span>Occupancy:</span>
-                <span className="font-semibold">{analysis.occupancy}%</span>
+                <span className="font-semibold">
+                  {((analysis.occupancy || 0) * 100).toFixed(2)}%
+                </span>
               </div>
             </CardContent>
           </Card>
