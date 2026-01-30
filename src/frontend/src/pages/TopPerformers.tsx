@@ -5,6 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { TopPerformersResponse } from "@/types";
+import { sanitizeTitle } from "@/utils/formatters";
 
 export default function TopPerformers() {
   const navigate = useNavigate();
@@ -72,7 +73,9 @@ export default function TopPerformers() {
                     #{index + 1}
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-lg">{property.title}</h3>
+                    <h3 className="font-semibold text-lg">
+                      {sanitizeTitle(property.title)}
+                    </h3>
                     <p className="text-sm text-gray-600">
                       {property.bedrooms} bed • {property.market_area}
                     </p>

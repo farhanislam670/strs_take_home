@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import { PropertyWithScore } from "@/types";
 import { useNavigate } from "react-router-dom";
+import { sanitizeTitle } from "@/utils/formatters";
 
 export default function PropertyList() {
   const navigate = useNavigate();
@@ -104,7 +105,9 @@ export default function PropertyList() {
                 onClick={() => navigate(`/analysis/${property.property_id}`)}
               >
                 <CardHeader>
-                  <CardTitle className="text-lg">{property.title}</CardTitle>
+                  <CardTitle className="text-lg">
+                    {sanitizeTitle(property.title)}
+                  </CardTitle>
                   <div className="flex gap-2 mt-2">
                     <Badge
                       variant={

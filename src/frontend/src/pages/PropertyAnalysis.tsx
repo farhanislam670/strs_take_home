@@ -5,6 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PropertyAnalysis } from "@/types";
+import { sanitizeTitle } from "@/utils/formatters";
 
 export default function PropertyAnalysisPage() {
   const { propertyId } = useParams();
@@ -45,7 +46,10 @@ export default function PropertyAnalysisPage() {
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold">{analysis.title}</h1>
+          <h1 className="text-4xl font-bold">
+            {" "}
+            {sanitizeTitle(analysis.title)}
+          </h1>
           <Button variant="outline" onClick={() => navigate("/properties")}>
             ← Back
           </Button>
