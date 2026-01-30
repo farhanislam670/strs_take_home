@@ -180,7 +180,10 @@ export default function PropertyAnalysisPage() {
                   onClick={() => navigate(`/analysis/${comp.property_id}`)}
                 >
                   <div>
-                    <p className="font-semibold">{comp.title}</p>
+                    <p className="font-semibold">
+                      {" "}
+                      {sanitizeTitle(comp.title)}
+                    </p>
                     <p className="text-sm text-gray-600">
                       {comp.bedrooms} bed • {comp.market_area}
                     </p>
